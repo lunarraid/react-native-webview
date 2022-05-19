@@ -395,6 +395,9 @@ NSString *const CUSTOM_SELECTOR = @"_CUSTOM_SELECTOR_";
       wkWebViewConfig.applicationNameForUserAgent = [NSString stringWithFormat:@"%@ %@", wkWebViewConfig.applicationNameForUserAgent, _applicationNameForUserAgent];
   }
 
+  self.schemeHandler = [[RNCWebviewURLSchemeHandler alloc] init];
+  [wkWebViewConfig setURLSchemeHandler:self.schemeHandler forURLScheme:@"app"];
+   
   return wkWebViewConfig;
 }
 

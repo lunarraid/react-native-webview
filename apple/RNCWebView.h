@@ -9,6 +9,8 @@
 #import <React/RCTDefines.h>
 #import <WebKit/WebKit.h>
 
+#import "RNCWebviewURLSchemeHandler.h"
+
 typedef enum RNCWebViewPermissionGrantType : NSUInteger {
     RNCWebViewPermissionGrantType_GrantIfSameHost_ElsePrompt,
     RNCWebViewPermissionGrantType_GrantIfSameHost_ElseDeny,
@@ -37,6 +39,7 @@ typedef enum RNCWebViewPermissionGrantType : NSUInteger {
 
 @interface RNCWebView : RCTView
 
+@property (nonatomic, strong) RNCWebviewURLSchemeHandler * _Nonnull schemeHandler;
 @property (nonatomic, weak) id<RNCWebViewDelegate> _Nullable delegate;
 @property (nonatomic, copy) NSDictionary * _Nullable source;
 @property (nonatomic, assign) BOOL messagingEnabled;

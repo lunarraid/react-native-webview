@@ -48,6 +48,7 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.ContextCompat;
 import androidx.core.util.Pair;
 import androidx.webkit.WebSettingsCompat;
+import androidx.webkit.WebViewAssetLoader;
 import androidx.webkit.WebViewFeature;
 
 import com.facebook.common.logging.FLog;
@@ -89,6 +90,7 @@ import com.reactnativecommunity.webview.events.TopRenderProcessGoneEvent;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.lang.IllegalArgumentException;
 import java.net.MalformedURLException;
@@ -660,7 +662,7 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
   @Override
   protected void addEventEmitters(ThemedReactContext reactContext, WebView view) {
     // Do not register default touch emitter and let WebView implementation handle touches
-    view.setWebViewClient(new RNCWebViewClient());
+    view.setWebViewClient(new RNCWebViewClient(reactContext));
   }
 
   @Override
@@ -880,6 +882,13 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
     protected RNCWebView.ProgressChangedFilter progressChangedFilter = null;
     protected @Nullable String ignoreErrFailedForThisURL = null;
     protected @Nullable BasicAuthCredential basicAuthCredential = null;
+    protected @Nullable WebViewAssetLoader assetLoader = null;
+
+    public RNCWebViewClient(ReactContext reactContext) {
+      this.assetLoader = new WebViewAssetLoader.Builder()
+        .addPathHandler("/DOCUMENT_DIRECTORY/", new WebViewAssetLoader.InternalStoragePathHandler(reactContext, reactContext.getFilesDir()))
+        .build();
+    }
 
     public void setIgnoreErrFailedForThisURL(@Nullable String url) {
       ignoreErrFailedForThisURL = url;
@@ -887,6 +896,12 @@ public class RNCWebViewManager extends SimpleViewManager<WebView> {
 
     public void setBasicAuthCredential(@Nullable BasicAuthCredential credential) {
       basicAuthCredential = credential;
+    }
+
+    @Override
+    @RequiresApi(21)
+    public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
+      return assetLoader.shouldInterceptRequest(request.getUrl());
     }
 
     @Override
